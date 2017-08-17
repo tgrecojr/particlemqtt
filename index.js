@@ -1,7 +1,8 @@
 var Particle = require('particle-api-js');
 var mqtt = require('mqtt');
+var config = require('config');
 
-var mqtt_url = "mqtt://localhost";
+var mqtt_url = config.get('mqtt.url');
 var options = {
     port: 1833,
     clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
