@@ -24,7 +24,7 @@ particle.login({username: config.get('particle.username'), password: config.get(
     particle.getEventStream({ deviceId: 'mine', auth: token }).then(function(stream) {
         stream.on('event', function(data) {
             if (data.name == 'humidity' || data.name == 'temperature'){
-                console.log(data.coreid + ":" + data.name + ":" + data.data);
+                console.log(getFriendlyNameForDevice(data.coreid) + ":" + data.name + ":" + data.data);
             }
           
         });
@@ -40,3 +40,22 @@ particle.login({username: config.get('particle.username'), password: config.get(
 function publishTempToHomeAssistant (temperature) {  
       client.publish('my/temp', temperature)
   }
+
+function getFriendlyNameForDevice(coreid){
+    var friendlyName;
+    switch (coreid) {
+        case '2f0042000e51353338363333':
+            friendlyName = "GARAGE";
+            break;
+        case '20002a000247343337373738':
+            friendlyName = "BASEMENT";
+            break;
+        case '38002f000f47333439323539':
+            friendlyName = "ATTIC";
+            break;
+        case '2b0026000647333530373233':
+            friendlyName = "OUTSIDE";
+            break;
+    }
+    return friendlyName;
+}
