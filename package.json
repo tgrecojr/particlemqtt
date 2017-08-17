@@ -1,0 +1,24 @@
+{
+  "name": "particlemqtt",
+  "version": "1.0.0",
+  "description": "A simple node application that listens to the temperature and humidity events being published on the particle cloud by my particle photon sensors and pushing to my local mqtt server to be read by my Home-Assistant instance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tgrecojr/particlemqtt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tgrecojr/particlemqtt/issues"
+  },
+  "homepage": "https://github.com/tgrecojr/particlemqtt#readme",
+  "dependencies": {
+    "config": "^1.26.2",
+    "mqtt": "^2.11.0",
+    "particle-api-js": "^6.5.0"
+  }
+}
