@@ -18,8 +18,17 @@ var token;
 
 particle.login({username: config.get('particle.username'), password: config.get('particle.password')}).then(
   function(data) {
+    console.log("logged in to particle. getting token");
     token = data.body.access_token;
-    var client = mqtt.connect(mqtt_url, options);
+    console.log("token: " + token);
+    particle.getEventStream({ deviceId: 'mine', auth: token }).then(function(stream) {
+        stream.on('event', function(data) {
+            if (data.name == 'humidity' || data.name == 'temperature'){
+                console.log(data.coreid + ":" + data.name + ":" + data.data);
+            }
+          
+        });
+      });
   },
   function (err) {
     console.log('Could not log in.', err.body.error_description);
