@@ -6,8 +6,8 @@ var mqtt_url = config.get('mqtt.url');
 var options = {
     port: 1833,
     clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
-    username: 'username',
-    password: 'password',
+    username: config.get('mqtt.username'),
+    password: config.get('mqtt.password'),
   };
 
   
@@ -16,7 +16,7 @@ var options = {
 var particle = new Particle();
 var token;
 
-particle.login({username: 'user@email.com', password: 'pass'}).then(
+particle.login({username: config.get('particle.username'), password: config.get('particle.password')}).then(
   function(data) {
     token = data.body.access_token;
     var client = mqtt.connect(mqtt_url, options);
