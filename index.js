@@ -37,18 +37,14 @@ particle.login({username: config.get('particle.username'), password: config.get(
 function publishTempToHomeAssistant (temperature) {  
     console.log("trying to publish to MQTT");
     mqttclient = mqtt.connect(config.get('mqtt.url'),options);
-    mqttclient.on('error', onError);
-    mqttclient.on('connect', function() { // When connected
-        console.log('connected');
-        
-        mqttclient.publish('mytopic/TEMP', temperature, function() {
-            console.log("Message is published");
-            mqttclient.end(); // Close the connection when published
-        });
-    });
+    mqttclient.on('error', handleMqttError);
+    mqttclient.publish('mytopic/TEMP', temperature);
+    console.log("Message is published");
+    mqttclient.end(); 
+    
   }
 
-  function onError(data){
+  function handleMqttError(data){
       console.log("MQTT ERROR: " + data);
       var lookForError = "ECONNREFUSED";
       if (data.toString().indexOf(lookForError) !== -1){
