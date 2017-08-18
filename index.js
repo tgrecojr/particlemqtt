@@ -2,14 +2,10 @@ var Particle = require('particle-api-js');
 var mqtt = require('mqtt');
 var config = require('config');
 
-var mqtt_url = config.get('mqtt.url');
 var options = {
-    port: 1833,
-    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
-    username: config.get('mqtt.username'),
-    password: config.get('mqtt.password'),
+    port: config.get('mqtt.port'),
+    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8)
   };
-
   
 
 
@@ -25,8 +21,8 @@ particle.login({username: config.get('particle.username'), password: config.get(
         stream.on('event', function(data) {
             if (data.name == 'humidity' || data.name == 'temperature'){
                 console.log(getFriendlyNameForDevice(data.coreid) + ":" + data.name + ":" + data.data);
-            }
-          
+                publishTempToHomeAssistant(data.data);
+            }          
         });
       });
   },
@@ -37,8 +33,28 @@ particle.login({username: config.get('particle.username'), password: config.get(
 );
 
 
+
 function publishTempToHomeAssistant (temperature) {  
-      client.publish('my/temp', temperature)
+    console.log("trying to publish to MQTT");
+    mqttclient = mqtt.connect(config.get('mqtt.url'),options);
+    mqttclient.on('error', onError);
+    mqttclient.on('connect', function() { // When connected
+        console.log('connected');
+        
+        mqttclient.publish('mytopic/TEMP', temperature, function() {
+            console.log("Message is published");
+            mqttclient.end(); // Close the connection when published
+        });
+    });
+  }
+
+  function onError(data){
+      console.log("MQTT ERROR: " + data);
+      var lookForError = "ECONNREFUSED";
+      if (data.toString().indexOf(lookForError) !== -1){
+        console.log("shutting down -- can't get a connection to MQTT")
+        process.exit(1);
+      }
   }
 
 function getFriendlyNameForDevice(coreid){
