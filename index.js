@@ -20,8 +20,7 @@ particle.login({username: config.get('particle.username'), password: config.get(
     particle.getEventStream({ deviceId: 'mine', auth: token }).then(function(stream) {
         stream.on('event', function(data) {
             if (data.name == 'humidity' || data.name == 'temperature'){
-                console.log(getFriendlyNameForDevice(data.coreid) + ":" + data.name + ":" + data.data);
-                publishTempToHomeAssistant(data.data);
+                publishTempToHomeAssistant(getFriendlyNameForDevice(data.coreid),data.name,data.data);
             }          
         });
       });
@@ -34,12 +33,10 @@ particle.login({username: config.get('particle.username'), password: config.get(
 
 
 
-function publishTempToHomeAssistant (temperature) {  
-    console.log("trying to publish to MQTT");
+function publishTempToHomeAssistant (location,messageType,value) {  
     mqttclient = mqtt.connect(config.get('mqtt.url'),options);
     mqttclient.on('error', handleMqttError);
-    mqttclient.publish('mytopic/TEMP', temperature);
-    console.log("Message is published");
+    mqttclient.publish('home/' + location + '/' + messageType, value);
     mqttclient.end(); 
     
   }
@@ -57,16 +54,16 @@ function getFriendlyNameForDevice(coreid){
     var friendlyName;
     switch (coreid) {
         case '2f0042000e51353338363333':
-            friendlyName = "GARAGE";
+            friendlyName = "garage";
             break;
         case '20002a000247343337373738':
-            friendlyName = "BASEMENT";
+            friendlyName = "basement";
             break;
         case '38002f000f47333439323539':
-            friendlyName = "ATTIC";
+            friendlyName = "attic";
             break;
         case '2b0026000647333530373233':
-            friendlyName = "OUTSIDE";
+            friendlyName = "outside";
             break;
     }
     return friendlyName;
