@@ -4,7 +4,9 @@ var config = require('config');
 
 var options = {
     port: config.get('mqtt.port'),
-    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8)
+    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+    username: config.get('mqtt.username'),
+    password: config.get('mqtt.password') 
   };
   
 
@@ -36,15 +38,18 @@ particle.login({username: config.get('particle.username'), password: config.get(
 function publishTempToHomeAssistant (location,messageType,value) {  
     mqttclient = mqtt.connect(config.get('mqtt.url'),options);
     mqttclient.on('error', handleMqttError);
-    mqttclient.publish('home/' + location + '/' + messageType, value);
+    var topicName = 'home/' + location + '/' + messageType;
+    mqttclient.publish(topicName, value);
+    console.log("published to: " + topicName + ":" + value)
     mqttclient.end(); 
     
   }
 
   function handleMqttError(data){
       console.log("MQTT ERROR: " + data);
-      var lookForError = "ECONNREFUSED";
-      if (data.toString().indexOf(lookForError) !== -1){
+      var lookForConnError = "ECONNREFUSED";
+      var lookForAuthError = "Not authorized";
+      if (data.toString().indexOf(lookForConnError) !== -1 || data.toString().indexOf(lookForAuthError) !== -1){
         console.log("shutting down -- can't get a connection to MQTT")
         process.exit(1);
       }
