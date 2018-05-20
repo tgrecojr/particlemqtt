@@ -39,7 +39,7 @@ function publishTempToHomeAssistant (location,messageType,value) {
     mqttclient = mqtt.connect(config.get('mqtt.url'),options);
     mqttclient.on('error', handleMqttError);
     var topicName = 'home/' + location + '/' + messageType;
-    mqttclient.publish(topicName, value);
+    mqttclient.publish(topicName, value,{'qos': 1, 'retain': true});
     console.log("published to: " + topicName + ":" + value)
     mqttclient.end(); 
     
