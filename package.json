@@ -18,7 +18,10 @@
   "homepage": "https://github.com/tgrecojr/particlemqtt#readme",
   "dependencies": {
     "config": "^1.26.2",
+    "moment": "^2.24.0",
     "mqtt": "^2.11.0",
-    "particle-api-js": "^6.5.0"
+    "node-vault": "^0.9.6",
+    "particle-api-js": "^6.5.0",
+    "vault": "^0.3.0"
   }
 }
